@@ -11,6 +11,9 @@ import { initializeAuth, getReactNativePersistence } from "firebase/auth";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getFirestore } from "firebase/firestore";
 
+// Lähde: Firebase Autentikointi otettu käyttöön tätä ohjevideota soveltaen:
+// https://www.youtube.com/watch?v=ONAVmsGW6-M
+
 const firebaseConfig = {
     apiKey: FIREBASE_API_KEY,
     authDomain: FIREBASE_AUTH_DOMAIN,

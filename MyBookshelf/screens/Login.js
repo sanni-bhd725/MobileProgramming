@@ -3,6 +3,9 @@ import React, { useState } from "react";
 import { FIREBASE_AUTH } from "../firebaseConfig";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
+// Lähde: Firebase Autentikointi otettu käyttöön tätä ohjevideota soveltaen:
+// https://www.youtube.com/watch?v=ONAVmsGW6-M
+
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
