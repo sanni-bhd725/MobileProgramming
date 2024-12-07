@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TextInput, ActivityIndicator, Button, KeyboardAvoidingView } from "react-native";
+import { View, StyleSheet, TextInput, ActivityIndicator, Button, KeyboardAvoidingView } from "react-native";
 import React, { useState } from "react";
 import { FIREBASE_AUTH } from "../firebaseConfig";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
@@ -28,8 +28,8 @@ const Login = () => {
         setLoading(true);
         try {
             const response = await createUserWithEmailAndPassword(FIREBASE_AUTH, email, password);
-            console.log(response);
-            alert('Account created! We have signed you in :)');
+            // console.log(response);
+            alert('Account created! We have signed you in.');
         } catch (error) {
             console.log(error);
             alert('Sign in failed: ' + error.message);
