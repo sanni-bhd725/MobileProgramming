@@ -12,6 +12,7 @@ export default function AddBook({ navigation }) {
 
     const user = FIREBASE_AUTH.currentUser;
 
+    // Haetaan Firebasesta käyttäjän tallentamat kirjat
     const fetchUserShelf = async () => {
         if (!user) return;
 
@@ -29,6 +30,7 @@ export default function AddBook({ navigation }) {
         fetchUserShelf();
     }, [userShelf]);
 
+    // Haetaan Google Books API:sta käyttäjän syöttämällä hakusanalla
     const searchBooks = async () => {
         try {
             const response = await axios.get("https://www.googleapis.com/books/v1/volumes", {
@@ -43,6 +45,7 @@ export default function AddBook({ navigation }) {
         }
     };
 
+    // Lisätään valittu kirja kirjahyllyyn
     const addToShelf = async (book) => {
         if (!user) {
             Alert.alert("Error", "User not logged in");
@@ -51,6 +54,8 @@ export default function AddBook({ navigation }) {
         try {
             const shelfRef = collection(FIREBASE_DB, `users/${user.uid}/shelf`);
             await addDoc(shelfRef, {
+
+                // Asetetaan unknown/null -tieto, jos kys. kohta on palautunut API:sta tyhjänä 
                 title: book.volumeInfo.title,
                 authors: book.volumeInfo.authors || ["Unknown Author"],
                 publishedDate: book.volumeInfo.publishedDate || "Unknown Date",
@@ -58,6 +63,7 @@ export default function AddBook({ navigation }) {
             });
             Alert.alert('Success', 'Book is successfully added');
 
+            // Ohjataan takaisin kirjahylly-listaukseen ja otetaan mukaan tieto uudesta lisäyksestä
             navigation.navigate('Bookshelf', {
                 newBook: {
                     title: book.volumeInfo.title,
@@ -76,6 +82,8 @@ export default function AddBook({ navigation }) {
     return (
         <View style={styles.container}>
             <Text style={styles.sectionTitle}>Add books from Google Books</Text>
+
+            {/* Hakukenttä */}
             <TextInput
                 style={styles.input}
                 placeholder="Search for books"
@@ -83,6 +91,8 @@ export default function AddBook({ navigation }) {
                 onChangeText={text => setQuery(text)}
             />
             <Button color='darkslategrey' title="Search" onPress={searchBooks} />
+
+            {/* Hakutulokset */}
             <FlatList
                 data={searchResults}
                 keyExtractor={(item) => item.id}

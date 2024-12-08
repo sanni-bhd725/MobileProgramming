@@ -19,6 +19,8 @@ export default function Layout() {
     }, []);
 
     return (
+
+        // Erilaiset sivunäkymät kirjautumattomana & kirjautuneena
         <Stack.Navigator initialRouteName="Login">
             {user ? (
                 <Stack.Screen

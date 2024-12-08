@@ -1,5 +1,5 @@
-import { View, StyleSheet, TextInput, ActivityIndicator, Button, Text, KeyboardAvoidingView } from "react-native";
 import React, { useState } from "react";
+import { View, StyleSheet, TextInput, ActivityIndicator, Button, Text, KeyboardAvoidingView } from "react-native";
 import { FIREBASE_AUTH } from "../firebaseConfig";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
@@ -11,6 +11,7 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
 
+    // Käyttäjän sisäänkirjautuminen
     const signIn = async () => {
         setLoading(true);
         try {
@@ -24,6 +25,7 @@ const Login = () => {
         }
     }
 
+    // Uuden käyttäjän luominen ja sisäänkirjaus
     const signUp = async () => {
         setLoading(true);
         try {
@@ -45,6 +47,8 @@ const Login = () => {
                 <Text style={styles.loginInfoText}>
                     Please sign in or create a new account by filling in your email and password of your choice.
                 </Text>
+
+                {/* Email ja salasana tekstisyötteet */}
                 <KeyboardAvoidingView behavior="padding">
                     <TextInput value={email} style={styles.input} placeholder="Email" autoCapitalize="none" keyboardType="email-address"
                         onChangeText={(text) => setEmail(text)}></TextInput>
