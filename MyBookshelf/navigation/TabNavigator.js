@@ -26,9 +26,9 @@ export default function TabNavigator() {
                     return <Ionicons name={iconName} size={size} color={color} />;
                 },
                 tabBarActiveTintColor: "darkslategrey",
-                tabBarInactiveTintColor: "#878c88",
-                tabBarActiveBackgroundColor: "#eddfcf",
-                tabBarInactiveBackgroundColor: "#eddfcf",
+                tabBarInactiveTintColor: "darkgrey",
+                tabBarActiveBackgroundColor: "seashell",
+                tabBarInactiveBackgroundColor: "seashell",
             })}
         >
             <Tab.Screen name="Bookshelf" component={Bookshelf} />

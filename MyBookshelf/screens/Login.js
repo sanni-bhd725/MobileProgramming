@@ -1,4 +1,4 @@
-import { View, StyleSheet, TextInput, ActivityIndicator, Button, KeyboardAvoidingView } from "react-native";
+import { View, StyleSheet, TextInput, ActivityIndicator, Button, Text, KeyboardAvoidingView } from "react-native";
 import React, { useState } from "react";
 import { FIREBASE_AUTH } from "../firebaseConfig";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
@@ -40,21 +40,27 @@ const Login = () => {
 
     return (
         <View style={styles.container}>
-            <KeyboardAvoidingView behavior="padding">
-                <TextInput value={email} style={styles.input} placeholder="Email" autoCapitalize="none"
-                    onChangeText={(text) => setEmail(text)}></TextInput>
-                <TextInput secureTextEntry={true} value={password} style={styles.input} placeholder="Password" autoCapitalize="none"
-                    onChangeText={(text) => setPassword(text)}></TextInput>
-                <View style={styles.mediumSpace} />
-                {loading ? (<ActivityIndicator size="large" color={"#0000ff"} />
-                ) : (
-                    <>
-                        <Button color='darkslategrey' title="Login" onPress={() => signIn()} />
-                        <View style={styles.smallSpace} />
-                        <Button color='slategrey' title="Create account" onPress={() => signUp()} />
-                    </>
-                )}
-            </KeyboardAvoidingView>
+            <View style={styles.loginField}>
+                <Text style={styles.loginTitle}>Welcome</Text>
+                <Text style={styles.loginInfoText}>
+                    Please sign in or create a new account by filling in your email and password of your choice.
+                </Text>
+                <KeyboardAvoidingView behavior="padding">
+                    <TextInput value={email} style={styles.input} placeholder="Email" autoCapitalize="none" keyboardType="email-address"
+                        onChangeText={(text) => setEmail(text)}></TextInput>
+                    <TextInput secureTextEntry={true} value={password} style={styles.input} placeholder="Password" autoCapitalize="none"
+                        onChangeText={(text) => setPassword(text)}></TextInput>
+                    <View style={styles.mediumSpace} />
+                    {loading ? (<ActivityIndicator size="large" color={"#0000ff"} />
+                    ) : (
+                        <>
+                            <Button color='darkslategrey' title="Login" onPress={() => signIn()} />
+                            <View style={styles.smallSpace} />
+                            <Button color='grey' title="Create account" onPress={() => signUp()} />
+                        </>
+                    )}
+                </KeyboardAvoidingView>
+            </View>
         </View>
     );
 }
@@ -66,7 +72,23 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         flex: 1,
         justifyContent: 'center',
-        backgroundColor: '#fffaf4',
+        backgroundColor: 'slategray',
+    },
+    loginField: {
+        paddingHorizontal: 15,
+        paddingTop: 30,
+        paddingBottom: 40,
+        borderRadius: 4,
+        backgroundColor: 'seashell'
+    },
+    loginTitle: {
+        fontSize: 20,
+        fontWeight: "bold",
+        marginBottom: 15,
+    },
+    loginInfoText: {
+        fontSize: 14,
+        marginBottom: 30,
     },
     input: {
         marginVertical: 4,
@@ -80,6 +102,6 @@ const styles = StyleSheet.create({
         height: 10,
     },
     mediumSpace: {
-        height: 35,
+        height: 20,
     }
 });

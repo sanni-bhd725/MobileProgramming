@@ -5,7 +5,7 @@ import { FIREBASE_DB, FIREBASE_AUTH } from "../firebaseConfig";
 import { collection, addDoc, getDocs } from "firebase/firestore";
 import { GOOGLE_BOOKS_API_KEY } from '@env';
 
-export default function AddBook() {
+export default function AddBook({ navigation }) {
     const [query, setQuery] = useState("");
     const [searchResults, setSearchResults] = useState([]);
     const [userShelf, setUserShelf] = useState([]);
@@ -13,6 +13,8 @@ export default function AddBook() {
     const user = FIREBASE_AUTH.currentUser;
 
     const fetchUserShelf = async () => {
+        if (!user) return;
+
         try {
             const shelfRef = collection(FIREBASE_DB, `users/${user.uid}/shelf`);
             const snapshot = await getDocs(shelfRef);
@@ -25,7 +27,7 @@ export default function AddBook() {
 
     useEffect(() => {
         fetchUserShelf();
-    }, []);
+    }, [userShelf]);
 
     const searchBooks = async () => {
         try {
@@ -42,6 +44,10 @@ export default function AddBook() {
     };
 
     const addToShelf = async (book) => {
+        if (!user) {
+            Alert.alert("Error", "User not logged in");
+            return;
+        }
         try {
             const shelfRef = collection(FIREBASE_DB, `users/${user.uid}/shelf`);
             await addDoc(shelfRef, {
@@ -50,14 +56,17 @@ export default function AddBook() {
                 publishedDate: book.volumeInfo.publishedDate || "Unknown Date",
                 thumbnail: book.volumeInfo.imageLinks?.thumbnail || null,
             });
-            setUserShelf((prevShelf) => [...prevShelf, {
-                title: book.volumeInfo.title,
-                authors: book.volumeInfo.authors || ["Unknown Author"],
-                publishedDate: book.volumeInfo.publishedDate || "Unknown Date",
-                thumbnail: book.volumeInfo.imageLinks?.thumbnail || null,
-            }]);
             Alert.alert('Success', 'Book is successfully added');
-            await fetchUserShelf();
+
+            navigation.navigate('Bookshelf', {
+                newBook: {
+                    title: book.volumeInfo.title,
+                    authors: book.volumeInfo.authors || ["Unknown Author"],
+                    publishedDate: book.volumeInfo.publishedDate || "Unknown Date",
+                    thumbnail: book.volumeInfo.imageLinks?.thumbnail || null,
+                },
+            });
+
         } catch (error) {
             Alert.alert("Error", "Error while adding a book");
             console.error("Error while adding a book:", error);
@@ -66,6 +75,7 @@ export default function AddBook() {
 
     return (
         <View style={styles.container}>
+            <Text style={styles.sectionTitle}>Add books from Google Books</Text>
             <TextInput
                 style={styles.input}
                 placeholder="Search for books"
@@ -84,9 +94,12 @@ export default function AddBook() {
                         />
                         <View style={styles.bookDetails}>
                             <Text style={styles.title}>{item.volumeInfo.title}</Text>
-                            <Text style={styles.authors}>{item.volumeInfo.authors?.join(", ")}</Text>
+                            <Text style={styles.authors}>{item.volumeInfo.authors}</Text>
                             <Text style={styles.publishedDate}>{item.volumeInfo.publishedDate}</Text>
-                            <Button color='#5d6452' title="Add to Bookshelf" onPress={() => addToShelf(item)} />
+                            <View style={styles.buttonSize}>
+                                <Button color='gray' title="Add to Shelf" onPress={
+                                    () => addToShelf(item)} />
+                            </View>
                         </View>
                     </View>
                 )}
@@ -100,7 +113,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingVertical: 40,
         flex: 1,
-        backgroundColor: '#a5aa9e',
+        backgroundColor: 'slategray',
+    },
+    sectionTitle: {
+        fontSize: 18,
+        fontWeight: "bold",
+        marginTop: 8,
+        marginBottom: 8,
     },
     input: {
         height: 40,
@@ -113,9 +132,10 @@ const styles = StyleSheet.create({
     },
     book: {
         flexDirection: 'row',
-        marginBottom: 16,
+        marginTop: 12,
+        marginBottom: 2,
         padding: 8,
-        backgroundColor: '#f9f4ee',
+        backgroundColor: 'seashell',
         borderRadius: 5,
         alignItems: 'center',
     },
@@ -141,5 +161,8 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: '#777',
         marginBottom: 8,
+    },
+    buttonSize: {
+        maxWidth: '45%'
     },
 });
