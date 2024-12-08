@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Button, StyleSheet, FlatList, Image } from "react-native";
+import { View, Text, Button, StyleSheet, FlatList, Image, Alert, TouchableOpacity } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 import { FIREBASE_DB, FIREBASE_AUTH } from "../firebaseConfig";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 
 export default function Bookshelf({ route }) {
     const [userShelf, setUserShelf] = useState([]);
@@ -25,6 +25,29 @@ export default function Bookshelf({ route }) {
         }
     }, [route.params?.newBook]);
 
+    const removeBook = async (bookId) => {
+        try {
+            const bookRef = doc(FIREBASE_DB, `users/${user.uid}/shelf`, bookId);
+            await deleteDoc(bookRef);
+            Alert.alert("Success", "Book removed successfully");
+            fetchUserShelf();
+        } catch (error) {
+            console.error("Error while removing book:", error);
+            Alert.alert("Error", "Failed to remove the book");
+        }
+    };
+
+    const confirmRemove = (bookId) => {
+        Alert.alert(
+            "Remove Book",
+            "Are you sure you want to remove this book?",
+            [
+                { text: "Remove", onPress: () => removeBook(bookId) },
+                { text: "Cancel" },
+            ]
+        );
+    };
+
     return (
         <View style={styles.container}>
             <Text style={styles.sectionTitle}>My Bookshelf</Text>
@@ -42,6 +65,9 @@ export default function Bookshelf({ route }) {
                             <Text style={styles.title}>{item.title}</Text>
                             <Text style={styles.authors}>{item.authors}</Text>
                             <Text style={styles.publishedDate}>{item.publishedDate}</Text>
+                            <View style={styles.buttonSize}>
+                                <Button title="Remove" color="maroon" onPress={() => confirmRemove(item.id)} />
+                            </View>
                         </View>
                     </View>
                 )}
@@ -102,5 +128,8 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: '#777',
         marginBottom: 8,
+    },
+    buttonSize: {
+        maxWidth: '30%'
     },
 });
